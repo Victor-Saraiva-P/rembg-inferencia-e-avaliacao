@@ -7,3 +7,9 @@ ORIGINAL_PHOTOS_DIR = os.path.join(BASE_DIR, 'dados', 'fotos originais')
 SEGMENTED_PHOTOS_DIR = os.path.join(BASE_DIR, 'dados', 'fotos segmentadas')
 OUTPUT_MODEL_DIR = os.path.join(BASE_DIR, 'dados', 'fotos geradas')
 MODELS_DIR = os.path.join(BASE_DIR, 'modelos')
+
+MODELOS_PARA_AVALIACAO = [
+    'u2net',
+    'u2netp',
+    'sam'
+]
