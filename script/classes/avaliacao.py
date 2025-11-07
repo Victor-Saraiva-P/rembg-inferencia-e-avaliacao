@@ -1,8 +1,10 @@
+from typing import Any
+
 from sqlalchemy import String, Float, Integer
 from sqlalchemy.orm import Mapped, mapped_column, composite
 
 from script.classes.base_orm import Base
-from script.classes.metrica import Metrica
+from script.classes.metrica import Metrica, metrificar
 from script.tipos.resolution import Resolucao
 
 
@@ -37,3 +39,10 @@ class Avaliacao(Base):
         noise_separation_score, contour_similarity,
         area_diff_pct, inference_time_ms
     )
+
+    def __init__(self, image_name, model_name, resolution: Resolucao, **kw: Any):
+        super().__init__(**kw)
+        self.image_name = image_name
+        self.model_name = model_name
+        self.resolution = resolution
+        self.metrica = metrificar(image_name)
