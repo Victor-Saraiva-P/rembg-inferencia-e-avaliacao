@@ -1,9 +1,13 @@
 import os
 
+from PIL import Image
 from rembg import remove, new_session
 
-from config import MODELS_DIR, ORIGINAL_PHOTOS_DIR, OUTPUT_MODEL_DIR, MODELOS_PARA_AVALIACAO
+from config import ORIGINAL_PHOTOS_DIR, OUTPUT_MODEL_DIR, MODELOS_PARA_AVALIACAO
+from script.avaliacao_repositorio import adicionar_avaliacao
+from script.classes.avaliacao import Avaliacao
 from script.lista_arquivos import lista_arquivos
+from script.tipos.resolution import Resolucao
 
 
 def main():
@@ -30,6 +34,20 @@ def main():
                     # Remove o fundo da foto usando a sessão do modelo
                     foto_sem_fundo = remove(foto_original, session=session)
                     arquivo_saida.write(foto_sem_fundo)
+
+            # Calcula a resolução
+            imagem_path = os.path.join(ORIGINAL_PHOTOS_DIR, foto)
+            if not os.path.exists(imagem_path):
+                raise FileNotFoundError(f"Imagem não encontrada em {imagem_path}")
+
+            with Image.open(imagem_path) as imagem:
+                largura_img, altura_img = imagem.size
+
+            resolucao = Resolucao(altura=altura_img, largura=largura_img)
+
+            # Avalia o modelo
+            avaliacao = Avaliacao(foto, modelo, resolucao)
+            adicionar_avaliacao(avaliacao)
 
 
 if __name__ == "__main__":
