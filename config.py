@@ -11,5 +11,19 @@ MODELS_DIR = os.path.join(BASE_DIR, 'modelos')
 MODELOS_PARA_AVALIACAO = [
     'u2net',
     'u2netp',
-    'sam'
+    'u2net_human_seg',
+    'u2net_cloth_seg',
+    'silueta',
+    'isnet-general-use',
+    'isnet-anime',
+    'sam',
+    'birefnet-general',
+    'birefnet-general-lite',
+    'birefnet-portrait',
+    'birefnet-dis',
+    'birefnet-hrsod',
+    'birefnet-cod',
+    'birefnet-massive'
 ]
+
+
