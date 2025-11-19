@@ -45,4 +45,4 @@ class Avaliacao(Base):
         self.image_name = image_name
         self.model_name = model_name
         self.resolution = resolution
-        self.metrica = metrificar(image_name)
+        self.metrica = metrificar(image_name, model_name)

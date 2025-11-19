@@ -1,9 +1,14 @@
 import os
 
 from PIL import Image
-from rembg import remove, new_session
+from rembg import new_session, remove
 
-from config import ORIGINAL_PHOTOS_DIR, OUTPUT_MODEL_DIR, MODELOS_PARA_AVALIACAO
+from config import (
+    MASKS_SUBDIR_PATH,
+    MODELOS_PARA_AVALIACAO,
+    ORIGINAL_PHOTOS_DIR,
+    OUTPUT_MODEL_DIR,
+)
 from script.avaliacao_repositorio import adicionar_avaliacao
 from script.classes.avaliacao import Avaliacao
 from script.lista_arquivos import lista_arquivos
@@ -23,17 +28,23 @@ def main():
             print(f" - Processando foto: {foto}")
 
             input_path = os.path.join(ORIGINAL_PHOTOS_DIR, foto)
-            output_path = os.path.join(OUTPUT_MODEL_DIR, modelo,foto)
+            output_path = os.path.join(OUTPUT_MODEL_DIR, modelo, foto)
+            mask_dir = MASKS_SUBDIR_PATH.format(model_name=modelo)
+            mask_output_path = os.path.join(mask_dir, foto)
 
-            # Cria o diretório de saída se não existir
             os.makedirs(os.path.dirname(output_path), exist_ok=True)
+            os.makedirs(mask_dir, exist_ok=True)
 
             with open(input_path, "rb") as arquivo_entrada:
-                with open(output_path, "wb") as arquivo_saida:
-                    foto_original = arquivo_entrada.read()
-                    # Remove o fundo da foto usando a sessão do modelo
-                    foto_sem_fundo = remove(foto_original, session=session)
-                    arquivo_saida.write(foto_sem_fundo)
+                foto_original = arquivo_entrada.read()
+
+            foto_sem_fundo = remove(foto_original, session=session)
+            with open(output_path, "wb") as arquivo_saida:
+                arquivo_saida.write(foto_sem_fundo)
+
+            mask_bytes = remove(foto_original, session=session, only_mask=True)
+            with open(mask_output_path, "wb") as arquivo_mask:
+                arquivo_mask.write(mask_bytes)
 
             # Calcula a resolução
             imagem_path = os.path.join(ORIGINAL_PHOTOS_DIR, foto)

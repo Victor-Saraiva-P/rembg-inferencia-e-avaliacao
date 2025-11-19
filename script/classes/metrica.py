@@ -1,9 +1,42 @@
+from __future__ import annotations
+
+import os
 from dataclasses import dataclass
 
+import numpy as np
 
-def calcular_roi_association(image_name):
-    # TODO: Implementar cálculo real
-    return 0  # Valor fictício para exemplo
+from config import MASKS_SUBDIR_PATH, SEGMENTED_PHOTOS_DIR
+from script.utils.carregador_mascara import carregar_mascara_binaria
+
+
+def _resolver_caminho_predito(model_name: str, image_name: str) -> str:
+    mask_dir = MASKS_SUBDIR_PATH.format(model_name=model_name)
+    return os.path.join(mask_dir, image_name)
+
+
+def calcular_roi_association(image_name: str, model_name: str) -> float:
+    gt_path = os.path.join(SEGMENTED_PHOTOS_DIR, image_name)
+    mask_dir = MASKS_SUBDIR_PATH.format(model_name=model_name)
+    pred_path = os.path.join(mask_dir, image_name)
+
+    gt_mask = carregar_mascara_binaria(gt_path)
+    pred_mask = carregar_mascara_binaria(pred_path)
+
+    intersecao = np.logical_and(gt_mask, pred_mask).sum()
+    soma_gt = gt_mask.sum()
+    soma_pred = pred_mask.sum()
+
+    denominador_dice = soma_gt + soma_pred
+    if denominador_dice == 0:
+        return 0.0
+
+    dice = (2 * intersecao) / denominador_dice
+
+    uniao = np.logical_or(gt_mask, pred_mask).sum()
+    iou = (intersecao / uniao) if uniao else 0.0
+
+    score = (dice * 0.85) + (iou * 0.15)
+    return float(round(score, 4))
 
 
 def calcular_pearson_corr(image_name):
@@ -36,9 +69,9 @@ def calcular_inference_time_ms(image_name):
     return 0  # Valor fictício para exemplo
 
 
-def metrificar(image_name):
+def metrificar(image_name, model_name):
     return Metrica(
-        calcular_roi_association(image_name),
+        calcular_roi_association(image_name, model_name),
         calcular_pearson_corr(image_name),
         calcular_spearman_corr(image_name),
         calcular_noise_separation_score(image_name),

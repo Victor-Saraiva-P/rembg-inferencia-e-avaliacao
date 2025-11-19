@@ -1,3 +1,5 @@
+pillow
+numpy
 sqlalchemy
 onnxruntime
 rembg
