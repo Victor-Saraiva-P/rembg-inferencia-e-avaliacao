@@ -18,13 +18,43 @@ as imagens previamente segmentadas para referência. As imagens geradas pelo pro
 - `estilo-codigo.md`: convenções de nomenclatura, tipagem e organização do código.
 - `testes-validacao.md`: checklist de verificação manual antes de abrir PR.
 - `diretrizes-commit-pr.md`: padrões para mensagens de commit e descrição de PR.
+- `PLAN-template.md`: modelo obrigatório para escrever planos em `PLAN.md`.
 - `docs/rembg/rembg-readme.md`: referência original do rembg cobrindo requisitos, instalação, subcomandos CLI, uso via docker e catálogo de modelos.
 - `docs/rembg/rembg-usage.md`: exemplos práticos de uso da função `remove` (sessões, alpha matting, somente máscara, bg customizado) para scripts Python.
 
 ## Fluxo de trabalho
 
-- Receber a solicitação (prompt/problema).
-- Planejar em `PLAN.md` (raiz), registrar passos propostos e alinhar ajustes na conversa.
-- Implementar conforme plano aprovado.
-- Revisar o que foi feito e rodar testes relevantes.
-- Preparar commits baseado em `diretrizes-commit-pr.md` e entregar.
+1. Receber a solicitação
+    - Pode ser: novo recurso, bug, refatoração, ajuste de config, etc.
+    - Nunca altere arquivos sem antes escrever um plano em `PLAN.md` e eu aprovar.
+
+2. Escrever um plano **detalhado** em `PLAN.md`.
+
+    - Sempre use **`docs/PLAN-template.md`** como base:
+      - Copie o conteúdo de `docs/PLAN-template.md` para `PLAN.md`.
+      - Preencha todas as seções do template.
+      - O plano DEVE conter:
+        - Lista de arquivos afetados.
+        - Mudanças detalhadas por arquivo.
+        - Trechos de código aproximados em blocos de código Markdown.
+        - Descrição do fluxo de dados.
+        - Estratégia de testes.
+
+    - Não altere o arquivo `docs/PLAN-template.md`.  
+      Ele é apenas o modelo; o plano concreto é sempre `PLAN.md`.
+
+3. Enviar o conteúdo de `PLAN.md` para eu revisar e aprovar **antes** de qualquer alteração nos arquivos.
+
+4. Cenários após revisão
+    - Se o plano for aprovado: pode seguir para a implementação exatamente como descrito.
+    - Se precisar de ajustes: vamos iterar no `PLAN.md` até ficar claro.
+
+5. Implementação
+    - Só então você edita os arquivos conforme o plano aprovado.
+    - Se precisar mudar o escopo durante a implementação, atualize `PLAN.md` primeiro e me peça aprovação novamente.
+
+6. Revisão e testes
+    - Revisar o que foi feito e rodar os testes listados no plano.
+
+7. Commits
+    - Preparar commits baseado em `diretrizes-commit-pr.md` e entregar.
