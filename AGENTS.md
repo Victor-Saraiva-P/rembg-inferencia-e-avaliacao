@@ -18,6 +18,7 @@ as imagens previamente segmentadas para referência. As imagens geradas pelo pro
 - `estilo-codigo.md`: convenções de nomenclatura, tipagem e organização do código.
 - `testes-validacao.md`: checklist de verificação manual antes de abrir PR.
 - `diretrizes-commit-pr.md`: padrões para mensagens de commit e descrição de PR.
+- `eval-types.md`: critérios de avaliação dos modelos.
 - `PLAN-template.md`: modelo obrigatório para escrever planos em `PLAN.md`.
 - `docs/rembg/rembg-readme.md`: referência original do rembg cobrindo requisitos, instalação, subcomandos CLI, uso via docker e catálogo de modelos.
 - `docs/rembg/rembg-usage.md`: exemplos práticos de uso da função `remove` (sessões, alpha matting, somente máscara, bg customizado) para scripts Python.
