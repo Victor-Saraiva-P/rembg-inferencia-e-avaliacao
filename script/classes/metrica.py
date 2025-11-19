@@ -32,10 +32,11 @@ def calcular_roi_association(image_name: str, model_name: str) -> float:
 
     dice = (2 * intersecao) / denominador_dice
 
-    uniao = np.logical_or(gt_mask, pred_mask).sum()
-    iou = (intersecao / uniao) if uniao else 0.0
+    # # Cálculo do IoU ( opcional, para desempate)
+    # uniao = np.logical_or(gt_mask, pred_mask).sum()
+    # iou = (intersecao / uniao) if uniao else 0.0
 
-    score = (dice * 0.85) + (iou * 0.15)
+    score = dice
     return float(round(score, 4))
 
 
