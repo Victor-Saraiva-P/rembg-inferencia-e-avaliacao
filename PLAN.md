@@ -46,7 +46,7 @@ with open(input_path, "rb") as arquivo_entrada:
 - [ ] Atualizar `calcular_roi_association` para aceitar `image_name` e `model_name`, abrir as duas máscaras (GT e previsão) de:
   - GT: `os.path.join(SEGMENTED_PHOTOS_DIR, image_name)`
   - predição: `os.path.join(MASKS_SUBDIR_PATH.format(model_name=model_name), image_name)`
-  calcular Dice Coefficient e IoU, combiná-los (usar Dice como métrica principal e IoU apenas para desempate) e retornar o valor (fallback para 0 quando não houver interseção relevante). Tratar o divisor do Dice para não dividir por zero.
+  calcular Dice Coefficient para servir como métrica principal (mantendo a possibilidade de calcular IoU separadamente no futuro) e retornar o valor (fallback para 0 quando não houver interseção relevante). Tratar o divisor do Dice para não dividir por zero.
 - [ ] Atualizar `metrificar` para receber `model_name` e repassar ao `calcular_roi_association`; demais métricas permanecem placeholders.
 
 Trecho(s) de código aproximado(s):
@@ -54,7 +54,7 @@ Trecho(s) de código aproximado(s):
 ```python
 from config import SEGMENTED_PHOTOS_DIR, MASKS_SUBDIR_PATH
 import numpy as np
-from script.utils.imagem import carregar_mascara_binaria
+from script.utils.carregador_mascara import carregar_mascara_binaria
 
 
 def calcular_roi_association(image_name: str, model_name: str) -> float:
@@ -65,8 +65,7 @@ def calcular_roi_association(image_name: str, model_name: str) -> float:
     pred_mask = carregar_mascara_binaria(pred_path)
     inter = np.logical_and(gt_mask, pred_mask).sum()
     dice = (2 * inter) / (gt_mask.sum() + pred_mask.sum()) if (gt_mask.sum() + pred_mask.sum()) else 0.0
-    iou = inter / np.logical_or(gt_mask, pred_mask).sum() if np.logical_or(gt_mask, pred_mask).sum() else 0.0
-    return round((dice * 0.85) + (iou * 0.15), 4)
+    return round(dice, 4)
 ```
 
 ### 3.3 `script/classes/avaliacao.py`
@@ -110,7 +109,7 @@ MASKS_SUBDIR_PATH = os.path.join(OUTPUT_MODEL_DIR, "{model_name}", "masks")
 2. `script/main.py` também chama `remove(..., only_mask=True)` e grava a máscara do modelo em `MASKS_SUBDIR_PATH.format(model_name=<modelo>)/<imagem>`.
 3. `Avaliacao.__init__` cria a resolução e chama `metrificar(image_name, model_name)`.
 4. `metrificar` usa `carregar_mascara_binaria` para obter a ROI manual (`SEGMENTED_PHOTOS_DIR/<imagem>`) e a previsão do modelo (`MASKS_SUBDIR_PATH.format(model_name=<modelo>)/<imagem>`).
-4. `calcular_roi_association` calcula Dice e IoU entre as máscaras, retorna um escalar normalizado (0–1) representando a associação à ROI, que é persistido no banco.
+4. `calcular_roi_association` calcula o Dice entre as máscaras (mantendo a possibilidade de analisar IoU separadamente quando necessário) e retorna o escalar normalizado (0–1) representando a associação à ROI, que é persistido no banco.
 
 ## 5. Estratégia de testes
 
